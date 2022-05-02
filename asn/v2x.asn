@@ -1,0 +1,1040 @@
+MsgFrame DEFINITIONS AUTOMATIC TAGS ::= BEGIN
+
+MessageFrame ::= CHOICE { 
+    bsmFrame BasicSafetyMessage,
+    mapFrame MapData,
+    rsmFrame RoadsideSafetyMessage,
+    spatFrame SPAT,
+    rsiFrame RoadSideInformation,
+    ...
+}
+
+BasicSafetyMessage ::= SEQUENCE {
+    msgCnt MsgCount,
+    id OCTET STRING (SIZE(8)),
+    secMark DSecond,
+    timeConfidence TimeConfidence OPTIONAL,
+    pos Position3D,
+    posAccuracy PositionalAccuracy OPTIONAL,
+    posConfidence PositionConfidenceSet OPTIONAL,
+    transmission TransmissionState,
+    speed Speed,
+    heading Heading,
+    angle SteeringWheelAngle OPTIONAL,
+    motionCfd MotionConfidenceSet OPTIONAL,
+    accelSet AccelerationSet4Way,
+    brakes BrakeSystemStatus,
+    size VehicleSize,
+    vehicleClass VehicleClassification,
+    safetyExt VehicleSafetyExtensions OPTIONAL,
+    emergencyExt VehicleEmergencyExtensions OPTIONAL,
+    ...
+}
+
+MsgCount ::= INTEGER (0..127)
+
+AccelerationSet4Way ::= SEQUENCE {
+    long Acceleration, 
+    lat Acceleration, 
+    vert VerticalAcceleration, 
+    yaw YawRate
+}
+
+Acceleration ::= INTEGER (-2000..2001)
+VerticalAcceleration ::= INTEGER (-127..127)
+YawRate ::= INTEGER (-32767..32767)
+Speed ::= INTEGER (0..8191)
+Heading ::= INTEGER (0..28800) 
+CoarseHeading ::= INTEGER (0..240)
+SteeringWheelAngle ::= INTEGER (-126..127)
+
+MotionConfidenceSet ::= SEQUENCE {
+    speedCfd SpeedConfidence OPTIONAL,
+    headingCfd HeadingConfidence OPTIONAL,
+    steerCfd SteeringWheelAngleConfidence OPTIONAL
+}
+
+HeadingConfidence ::= ENUMERATED {
+    unavailable (0), 
+    prec10deg (1), 
+    prec05deg (2), 
+    prec01deg (3), 
+    prec0-1deg (4), 
+    prec0-05deg (5), 
+    prec0-01deg (6), 
+    prec0-0125deg (7) 
+    }
+
+SpeedConfidence ::= ENUMERATED {
+    unavailable (0), 
+    prec100ms (1), 
+    prec10ms (2), 
+    prec5ms (3), 
+    prec1ms (4), 
+    prec0-1ms (5), 
+    prec0-05ms (6), 
+    prec0-01ms (7) 
+    }
+
+SteeringWheelAngleConfidence ::= ENUMERATED {
+    unavailable (0), 
+    prec2deg (1), 
+    prec1deg (2), 
+    prec0-02deg (3) 
+    }
+
+Latitude ::= INTEGER (-900000000..900000001) 
+Longitude ::= INTEGER (-1799999999..1800000001) 
+Elevation ::= INTEGER (-4096..61439)
+PositionConfidenceSet ::= SEQUENCE {
+    pos PositionConfidence, 
+    elevation ElevationConfidence OPTIONAL
+}
+
+PositionConfidence ::= ENUMERATED {
+    unavailable (0), 
+    a500m (1), 
+    a200m (2), 
+    a100m (3), 
+    a50m (4), 
+    a20m (5), 
+    a10m (6), 
+    a5m (7), 
+    a2m (8), 
+    a1m (9), 
+    a50cm (10), 
+    a20cm (11), 
+    a10cm (12), 
+    a5cm (13), 
+    a2cm (14), 
+    a1cm (15) 
+}
+
+ElevationConfidence ::= ENUMERATED {
+    unavailable (0), 
+    elev-500-00 (1), 
+    elev-200-00 (2), 
+    elev-100-00 (3), 
+    elev-050-00 (4), 
+    elev-020-00 (5), 
+    elev-010-00 (6), 
+    elev-005-00 (7), 
+    elev-002-00 (8), 
+    elev-001-00 (9), 
+    elev-000-50 (10), 
+    elev-000-20 (11), 
+    elev-000-10 (12), 
+    elev-000-05 (13), 
+    elev-000-02 (14), 
+    elev-000-01 (15) 
+}
+
+Position3D ::= SEQUENCE {
+    lat Latitude, 
+    long Longitude, 
+    elevation Elevation OPTIONAL
+}
+
+SemiMajorAxisAccuracy ::= INTEGER (0..255)
+SemiMinorAxisAccuracy ::= INTEGER (0..255)
+SemiMajorAxisOrientation ::= INTEGER (0..65535)
+
+PositionalAccuracy ::= SEQUENCE {
+    semiMajor SemiMajorAxisAccuracy,
+    semiMinor SemiMinorAxisAccuracy,
+    orientation SemiMajorAxisOrientation
+}
+
+PositionOffsetLLV ::= SEQUENCE {
+		offsetLL PositionOffsetLL,
+		offsetV VerticalOffset OPTIONAL	
+	}
+
+OffsetLL-B12 ::= INTEGER (-2048..2047) 
+OffsetLL-B14 ::= INTEGER (-8192..8191) 
+OffsetLL-B16 ::= INTEGER (-32768..32767) 
+OffsetLL-B18 ::= INTEGER (-131072..131071) 
+OffsetLL-B22 ::= INTEGER (-2097152..2097151) 
+OffsetLL-B24 ::= INTEGER (-8388608..8388607) 
+
+Position-LL-24B ::= SEQUENCE { 
+    lon OffsetLL-B12,
+    lat OffsetLL-B12
+    }
+
+Position-LL-28B ::= SEQUENCE { 
+    lon OffsetLL-B14,
+    lat OffsetLL-B14
+    }
+
+Position-LL-32B ::= SEQUENCE { 
+    lon OffsetLL-B16,
+    lat OffsetLL-B16
+    }
+
+Position-LL-36B ::= SEQUENCE { 
+    lon OffsetLL-B18,
+    lat OffsetLL-B18
+    }
+
+Position-LL-44B ::= SEQUENCE { 
+    lon OffsetLL-B22,
+    lat OffsetLL-B22
+    }
+
+Position-LL-48B ::= SEQUENCE { 
+    lon OffsetLL-B24,
+    lat OffsetLL-B24
+    }
+
+Position-LLmD-64b ::= SEQUENCE {
+    lon Longitude,
+    lat Latitude
+    }
+
+PositionOffsetLL ::= CHOICE { 
+    position-LL1 Position-LL-24B, 
+    position-LL2 Position-LL-28B, 
+    position-LL3 Position-LL-32B, 
+    position-LL4 Position-LL-36B, 
+    position-LL5 Position-LL-44B, 
+    position-LL6 Position-LL-48B, 
+    position-LatLon Position-LLmD-64b 
+}
+
+VerticalOffset ::= CHOICE { 
+    offset1 VertOffset-B07, 
+    offset2 VertOffset-B08, 
+    offset3 VertOffset-B09, 
+    offset4 VertOffset-B10, 
+    offset5 VertOffset-B11, 
+    offset6 VertOffset-B12, 
+    elevation Elevation 
+    }
+
+VertOffset-B07 ::= INTEGER (-64..63) 
+VertOffset-B08 ::= INTEGER (-128..127) 
+VertOffset-B09 ::= INTEGER (-256..255) 
+VertOffset-B10 ::= INTEGER (-512..511) 
+VertOffset-B11 ::= INTEGER (-1024..1023) 
+VertOffset-B12 ::= INTEGER (-2048..2047) 
+DSecond ::= INTEGER (0..65535)
+	
+	
+DYear ::= INTEGER (0..4095) 
+DMonth ::= INTEGER (0..12) 
+DDay ::= INTEGER (0..31) 
+DHour ::= INTEGER (0..31) 
+DMinute ::= INTEGER (0..60) 
+DTimeOffset ::= INTEGER (-840..840) 
+DDateTime ::= SEQUENCE {
+    year DYear OPTIONAL,
+    month DMonth OPTIONAL,
+    day DDay OPTIONAL,
+    hour DHour OPTIONAL,
+    minute DMinute OPTIONAL,
+    second DSecond OPTIONAL,
+    offset DTimeOffset OPTIONAL 
+    }
+
+MinuteOfTheYear ::= INTEGER (0..527040) 
+TimeMark ::= INTEGER (0..36001) 
+TimeOffset ::= INTEGER (1..65535) 
+
+TimeConfidence ::= ENUMERATED {
+    unavailable (0), 
+    time-100-000 (1), 
+    time-050-000 (2), 
+    time-020-000 (3), 
+    time-010-000 (4), 
+    time-002-000 (5), 
+    time-001-000 (6), 
+    time-000-500 (7), 
+    time-000-200 (8), 
+    time-000-100 (9), 
+    time-000-050 (10), 
+    time-000-020 (11), 
+    time-000-010 (12), 
+    time-000-005 (13), 
+    time-000-002 (14), 
+    time-000-001 (15), 
+    time-000-000-5 (16), 
+    time-000-000-2 (17), 
+    time-000-000-1 (18), 
+    time-000-000-05 (19), 
+    time-000-000-02 (20), 
+    time-000-000-01 (21), 
+    time-000-000-005 (22), 
+    time-000-000-002 (23), 
+    time-000-000-001 (24), 
+    time-000-000-000-5 (25), 
+    time-000-000-000-2 (26), 
+    time-000-000-000-1 (27), 
+    time-000-000-000-05 (28), 
+    time-000-000-000-02 (29), 
+    time-000-000-000-01 (30), 
+    time-000-000-000-005 (31), 
+    time-000-000-000-002 (32), 
+    time-000-000-000-001 (33), 
+    time-000-000-000-000-5 (34), 
+    time-000-000-000-000-2 (35), 
+    time-000-000-000-000-1 (36), 
+    time-000-000-000-000-05 (37), 
+    time-000-000-000-000-02 (38), 
+    time-000-000-000-000-01 (39) 
+    }
+
+MapData ::=	SEQUENCE {
+    msgCnt MsgCount,
+    timeStamp MinuteOfTheYear OPTIONAL,
+    nodes NodeList,
+    ...
+}
+
+LaneList ::= SEQUENCE (SIZE(1..32)) OF Lane
+
+Lane ::= SEQUENCE {
+    laneID LaneID,
+    laneWidth LaneWidth OPTIONAL,
+    laneAttributes LaneAttributes OPTIONAL,
+    maneuvers AllowedManeuvers OPTIONAL,
+    connectsTo ConnectsToList OPTIONAL,	
+    speedLimits SpeedLimitList OPTIONAL,
+    points PointList OPTIONAL,
+    ...
+}
+
+LaneID ::= INTEGER (0..255) 
+LaneWidth ::= INTEGER (0..32767) 
+ConnectsToList ::= SEQUENCE (SIZE(1..8)) OF Connection
+
+Connection::= SEQUENCE {
+    remoteIntersection NodeReferenceID,
+    connectingLane ConnectingLane OPTIONAL,
+    phaseId PhaseID OPTIONAL
+}
+
+ConnectingLane ::= SEQUENCE {
+    lane LaneID, 
+    maneuver AllowedManeuvers OPTIONAL
+    }
+
+AllowedManeuvers ::= BIT STRING {
+    maneuverStraightAllowed (0),
+    maneuverLeftAllowed (1),
+    maneuverRightAllowed (2),
+    maneuverUTurnAllowed (3),
+    maneuverLeftTurnOnRedAllowed (4),
+    maneuverRightTurnOnRedAllowed (5),
+    maneuverLaneChangeAllowed (6),
+    maneuverNoStoppingAllowed (7),
+    yieldAllwaysRequired (8),
+    goWithHalt (9),
+    caution (10),
+    reserved1 (11)
+    } (SIZE(12))
+
+LaneAttributes ::= SEQUENCE {
+    shareWith LaneSharing OPTIONAL,
+    laneType LaneTypeAttributes
+}
+
+LaneSharing ::= BIT STRING {
+    overlappingLaneDescriptionProvided (0),
+    multipleLanesTreatedAsOneLane (1),
+    otherNonMotorizedTrafficTypes (2), 
+    individualMotorizedVehicleTraffic (3),
+    busVehicleTraffic (4),
+    taxiVehicleTraffic (5),
+    pedestriansTraffic (6),
+    cyclistVehicleTraffic (7),
+    trackedVehicleTraffic (8),
+    pedestrianTraffic (9)
+    } (SIZE (10))
+
+LaneTypeAttributes ::= CHOICE {
+    vehicle LaneAttributes-Vehicle, 
+    crosswalk LaneAttributes-Crosswalk, 
+    bikeLane LaneAttributes-Bike, 
+    sidewalk LaneAttributes-Sidewalk, 
+    median LaneAttributes-Barrier, 
+    striping LaneAttributes-Striping, 
+    trackedVehicle LaneAttributes-TrackedVehicle, 
+    parking LaneAttributes-Parking, 
+    ...
+    }
+
+LaneAttributes-Vehicle ::= BIT STRING { 
+    isVehicleRevocableLane (0),
+    isVehicleFlyOverLane (1),
+    hovLaneUseOnly (2),
+    restrictedToBusUse (3),
+    restrictedToTaxiUse (4),
+    restrictedFromPublicUse (5),
+    hasIRbeaconCoverage (6),
+    permissionOnRequest (7) 
+    } (SIZE (8,...))
+
+LaneAttributes-Crosswalk ::= BIT STRING { 
+    crosswalkRevocableLane (0),
+    bicyleUseAllowed (1),
+    isXwalkFlyOverLane (2),
+    fixedCycleTime (3),
+    biDirectionalCycleTimes (4),
+    hasPushToWalkButton (5),
+    audioSupport (6),
+    rfSignalRequestPresent (7),
+    unsignalizedSegmentsPresent (8)
+} (SIZE (16))
+
+LaneAttributes-Bike ::= BIT STRING { 
+    bikeRevocableLane (0),
+    pedestrianUseAllowed (1),
+    isBikeFlyOverLane (2),
+    fixedCycleTime (3),
+    biDirectionalCycleTimes (4),
+    isolatedByBarrier (5),
+    unsignalizedSegmentsPresent (6)
+    } (SIZE (16))
+
+LaneAttributes-Sidewalk ::= BIT STRING { 
+    sidewalk-RevocableLane (0),
+    bicyleUseAllowed (1),
+    isSidewalkFlyOverLane (2),
+    walkBikes (3)
+    } (SIZE (16))
+
+LaneAttributes-Barrier ::= BIT STRING { 
+    median-RevocableLane (0),
+    median (1),
+    whiteLineHashing (2),
+    stripedLines (3),
+    doubleStripedLines (4),
+    trafficCones (5),
+    constructionBarrier (6),
+    trafficChannels (7),
+    lowCurbs (8),
+    highCurbs (9) 
+    } (SIZE (16))
+
+LaneAttributes-Striping ::= BIT STRING { 
+    stripeToConnectingLanesRevocableLane (0),
+    stripeDrawOnLeft (1),
+    stripeDrawOnRight (2),
+    stripeToConnectingLanesLeft (3),
+    stripeToConnectingLanesRight (4),
+    stripeToConnectingLanesAhead (5)
+    } (SIZE (16))
+
+LaneAttributes-TrackedVehicle ::= BIT STRING { 
+    spec-RevocableLane (0),
+    spec-commuterRailRoadTrack (1),
+    spec-lightRailRoadTrack (2),
+    spec-heavyRailRoadTrack (3),
+    spec-otherRailType (4) 
+    } (SIZE (16))
+
+LaneAttributes-Parking ::= BIT STRING {
+    parkingRevocableLane (0),
+    parallelParkingInUse (1),
+    headInParkingInUse (2),
+    doNotParkZone (3),
+    parkingForBusUse (4),
+    parkingForTaxiUse (5),
+    noPublicParkingUse (6)
+    } (SIZE (16))
+
+LinkList ::= SEQUENCE (SIZE(1..32)) OF Link
+	
+Link ::= SEQUENCE {
+    name DescriptiveName OPTIONAL,
+    upstreamNodeId NodeReferenceID,
+    speedLimits SpeedLimitList OPTIONAL,
+    linkWidth LaneWidth,
+    points PointList OPTIONAL,
+    movements MovementList OPTIONAL,
+    lanes LaneList,
+    ...
+}
+
+MovementList ::= SEQUENCE (SIZE(1..32)) OF Movement
+
+Movement ::= SEQUENCE {
+    remoteIntersection NodeReferenceID,
+    phaseId PhaseID OPTIONAL
+}
+
+NodeList ::= SEQUENCE (SIZE(1..32)) OF Node
+	
+Node ::= SEQUENCE {
+    name DescriptiveName OPTIONAL,
+    id NodeReferenceID,
+    refPos Position3D, 
+    inLinks LinkList OPTIONAL,
+    ...
+}
+
+DescriptiveName ::= IA5String (SIZE(1..63))
+
+NodeReferenceID ::= SEQUENCE {
+    region RoadRegulatorID OPTIONAL,
+    id NodeID
+    }
+
+RoadRegulatorID ::= INTEGER (0..65535)
+NodeID ::= INTEGER (0..65535)
+PointList ::= SEQUENCE (SIZE(2..31)) OF RoadPoint
+
+RoadPoint ::= SEQUENCE {
+    posOffset PositionOffsetLLV,
+    ...
+}
+
+SpeedLimitList ::= SEQUENCE (SIZE(1..9)) OF RegulatorySpeedLimit
+	
+RegulatorySpeedLimit ::= SEQUENCE {
+    type SpeedLimitType,
+    speed Speed
+    }
+
+SpeedLimitType ::= ENUMERATED {
+    unknown, 
+    maxSpeedInSchoolZone, 
+    maxSpeedInSchoolZoneWhenChildrenArePresent, 
+    maxSpeedInConstructionZone, 
+    vehicleMinSpeed,
+    vehicleMaxSpeed, 
+    vehicleNightMaxSpeed,
+    truckMinSpeed,
+    truckMaxSpeed,
+    truckNightMaxSpeed,
+    vehiclesWithTrailersMinSpeed,
+    vehiclesWithTrailersMaxSpeed,
+    vehiclesWithTrailersNightMaxSpeed,
+    ...
+}
+
+RoadSideInformation ::= SEQUENCE {
+    msgCnt MsgCount,
+    moy MinuteOfTheYear OPTIONAL,
+    id OCTET STRING (SIZE(8)),
+    refPos Position3D,
+    rtes RTEList OPTIONAL,
+    rtss RTSList OPTIONAL,
+    ...
+}
+
+RTEList ::= SEQUENCE (SIZE(1..8)) OF RTEData
+RTEData ::= SEQUENCE {
+    rteId INTEGER (0..255),
+    eventType EventType,
+    eventSource EventSource,
+    eventPos PositionOffsetLLV OPTIONAL,
+    eventRadius Radius OPTIONAL,
+    description Description OPTIONAL,
+    timeDetails RSITimeDetails OPTIONAL,
+    priority RSIPriority OPTIONAL,
+    referencePaths ReferencePathList OPTIONAL,
+    referenceLinks ReferenceLinkList OPTIONAL,
+    eventConfidence Confidence OPTIONAL,
+    ...
+}
+
+EventSource ::= ENUMERATED {
+    unknown(0),	
+    police(1),	
+    government(2),	
+    meteorological(3), 
+    internet(4),	
+    detection(5),	
+    ...
+}
+
+EventType ::= INTEGER (0..65535)
+RSITimeDetails ::= SEQUENCE {
+    startTime MinuteOfTheYear OPTIONAL,
+    endTime MinuteOfTheYear OPTIONAL,
+    endTimeConfidence TimeConfidence OPTIONAL
+}
+
+ReferencePathList ::= SEQUENCE (SIZE(1..8)) OF ReferencePath
+
+ReferencePath ::= SEQUENCE {
+    activePath PathPointList,
+    pathRadius Radius
+}
+
+RTSList ::= SEQUENCE (SIZE(1..16)) OF RTSData
+
+RTSData ::= SEQUENCE {
+    rtsId INTEGER (0..255),
+    signType SignType,
+    signPos PositionOffsetLLV OPTIONAL,
+    description Description OPTIONAL,
+    timeDetails RSITimeDetails OPTIONAL,
+    priority RSIPriority OPTIONAL,
+    referencePaths ReferencePathList OPTIONAL,
+    referenceLinks ReferenceLinkList OPTIONAL,
+    ...
+}
+
+Description ::= CHOICE{
+    textString IA5String (SIZE(1..512)),
+    textGB2312 OCTET STRING (SIZE(2..512))
+}
+
+ReferenceLinkList ::= SEQUENCE (SIZE(1..16)) OF ReferenceLink
+
+ReferenceLink ::= SEQUENCE {
+    upstreamNodeId NodeReferenceID,
+    downstreamNodeId NodeReferenceID,
+    referenceLanes ReferenceLanes OPTIONAL
+}
+
+ReferenceLanes ::= BIT STRING {
+    reserved(0),
+    lane1(1),
+    lane2(2),
+    lane3(3),
+    lane4(4),
+    lane5(5),
+    lane6(6),
+    lane7(7),
+    lane8(8),
+    lane9(9),
+    lane10(10),
+    lane11(11),
+    lane12(12),
+    lane13(13),
+    lane14(14),
+    lane15(15)
+} (SIZE (16))
+
+SignType ::= INTEGER (0..65535)
+
+PathPointList ::= SEQUENCE (SIZE(2..32)) OF PositionOffsetLLV
+Radius ::= INTEGER (0..65535)
+
+RSIPriority ::= OCTET STRING (SIZE(1))
+
+RoadsideSafetyMessage ::= SEQUENCE {
+    msgCnt MsgCount,
+    id OCTET STRING (SIZE(8)),
+    refPos Position3D,
+    participants ParticipantList,
+    ...
+}
+
+ParticipantList ::= SEQUENCE (SIZE(1..16)) OF ParticipantData
+
+ParticipantData ::= SEQUENCE {
+    ptcType ParticipantType,
+    ptcId INTEGER (0..65535),
+    source SourceType,
+    id OCTET STRING (SIZE(8)) OPTIONAL,
+    secMark DSecond,
+    pos PositionOffsetLLV,
+    posConfidence PositionConfidenceSet,
+    transmission TransmissionState OPTIONAL,
+    speed Speed,
+    heading Heading,
+    angle SteeringWheelAngle OPTIONAL,
+    motionCfd MotionConfidenceSet OPTIONAL,
+    accelSet AccelerationSet4Way OPTIONAL,
+    size VehicleSize,
+    vehicleClass VehicleClassification OPTIONAL,
+    ...
+}
+
+ParticipantType ::= ENUMERATED {
+    unknown (0), 
+    motor (1), 
+    non-motor (2), 
+    pedestrian (3), 
+    rsu (4), 
+    ...
+    }
+
+SourceType ::= ENUMERATED {
+    unknown(0),
+    selfinfo(1),
+    v2x(2),
+    video(3),
+    microwaveRadar(4),
+    loop(5),
+    lidar(6),
+    integrated(7),
+    ...
+    }
+
+SPAT ::= SEQUENCE {
+    msgCnt MsgCount,
+    moy MinuteOfTheYear OPTIONAL,
+    timeStamp DSecond OPTIONAL,
+    name DescriptiveName OPTIONAL,
+    intersections IntersectionStateList,
+    ...
+}
+
+IntersectionStateList ::= SEQUENCE (SIZE(1..32)) OF IntersectionState	
+	
+IntersectionState ::= SEQUENCE {
+    intersectionId NodeReferenceID,
+    status IntersectionStatusObject,
+    moy MinuteOfTheYear OPTIONAL,
+    timeStamp DSecond OPTIONAL,
+    timeConfidence TimeConfidence OPTIONAL,
+    phases PhaseList,
+    ...
+}
+
+IntersectionStatusObject ::= BIT STRING {
+    manualControlIsEnabled (0),
+    stopTimeIsActivated (1),
+    failureFlash (2),
+    preemptIsActive (3),
+    signalPriorityIsActive (4),
+    fixedTimeOperation (5),
+    trafficDependentOperation (6),
+    standbyOperation (7),
+    failureMode (8),
+    off (9),
+    recentMAPmessageUpdate (10),
+    recentChangeInMAPassignedLanesIDsUsed (11),
+    noValidMAPisAvailableAtThisTime (12),
+    noValidSPATisAvailableAtThisTime (13)
+} (SIZE(16))
+PhaseList ::= SEQUENCE (SIZE(1..16)) OF Phase
+Phase ::= SEQUENCE{
+    id PhaseID,
+    phaseStates PhaseStateList
+}
+
+PhaseStateList ::= SEQUENCE (SIZE(1..16)) OF PhaseState
+
+PhaseState ::= SEQUENCE {
+    light LightState,
+    timing TimeChangeDetails OPTIONAL,
+    ...
+    }
+
+LightState ::= ENUMERATED {
+    unavailable (0),
+    dark (1),
+    flashing-red (2),
+    red (3),
+    flashing-green (4),
+    permissive-green (5),
+    protected-green (6),
+    yellow (7),
+    flashing-yellow (8),
+    ...
+}
+
+TimeChangeDetails ::= CHOICE { 
+    counting TimeCountingDown,
+    utcTiming UTCTiming,
+    ...
+}
+
+UTCTiming ::= SEQUENCE {
+    startUTCTime TimeMark,
+    minEndUTCTime TimeMark OPTIONAL,
+    maxEndUTCTime TimeMark OPTIONAL,
+    likelyEndUTCTime TimeMark,
+    timeConfidence Confidence OPTIONAL,
+    nextStartUTCTime TimeMark OPTIONAL,
+    nextEndUTCTime TimeMark OPTIONAL
+}
+
+TimeCountingDown ::= SEQUENCE {
+    startTime TimeMark,
+    minEndTime TimeMark OPTIONAL,
+    maxEndTime TimeMark OPTIONAL,
+    likelyEndTime TimeMark,
+    timeConfidence Confidence OPTIONAL,
+    nextStartTime TimeMark OPTIONAL,
+    nextDuration TimeMark OPTIONAL
+}
+
+PhaseID ::= INTEGER (0..255)
+
+BrakeSystemStatus ::= SEQUENCE {
+		brakePadel BrakePedalStatus OPTIONAL,
+		wheelBrakes BrakeAppliedStatus OPTIONAL,
+		traction TractionControlStatus OPTIONAL,
+		abs AntiLockBrakeStatus OPTIONAL,
+		scs StabilityControlStatus OPTIONAL,
+		brakeBoost BrakeBoostApplied OPTIONAL,
+		auxBrakes AuxiliaryBrakeStatus OPTIONAL
+	}
+	
+BrakePedalStatus ::= ENUMERATED {
+    unavailable (0), 
+    off (1), 
+    on (2) 
+}
+
+BrakeAppliedStatus ::= BIT STRING {
+    unavailable (0), 
+    leftFront (1), 
+    leftRear (2), 
+    rightFront (3), 
+    rightRear (4) 
+} (SIZE (5))
+
+BrakeBoostApplied ::= ENUMERATED {
+    unavailable (0), 
+    off (1), 
+    on (2) 
+}
+
+TractionControlStatus ::= ENUMERATED {
+    unavailable (0), 
+    off (1), 
+    on (2), 
+    engaged (3) 
+}
+
+AntiLockBrakeStatus ::= ENUMERATED {
+    unavailable (0), 
+    off (1), 
+    on (2), 
+    engaged (3) 
+}
+
+StabilityControlStatus ::= ENUMERATED {
+    unavailable (0), 
+    off (1), 
+    on (2), 
+    engaged (3) 
+}
+
+AuxiliaryBrakeStatus ::= ENUMERATED {
+    unavailable (0), 
+    off (1), 
+    on (2), 
+    reserved (3)
+}
+
+VehicleClassification ::= SEQUENCE {
+    classification BasicVehicleClass,
+    fuelType FuelType OPTIONAL,
+    ...
+}
+
+BasicVehicleClass ::= INTEGER (0..255)
+
+unknownVehicleClass BasicVehicleClass ::= 0
+specialVehicleClass BasicVehicleClass ::= 1
+passenger-Vehicle-TypeUnknown BasicVehicleClass ::= 10 
+passenger-Vehicle-TypeOther BasicVehicleClass ::= 11
+lightTruck-Vehicle-TypeUnknown BasicVehicleClass ::= 20 
+lightTruck-Vehicle-TypeOther BasicVehicleClass ::= 21
+truck-Vehicle-TypeUnknown BasicVehicleClass ::= 25 
+truck-Vehicle-TypeOther BasicVehicleClass ::= 26
+truck-axleCnt2 BasicVehicleClass ::= 27 
+truck-axleCnt3 BasicVehicleClass ::= 28 
+truck-axleCnt4 BasicVehicleClass ::= 29 
+truck-axleCnt4Trailer BasicVehicleClass ::= 30 
+truck-axleCnt5Trailer BasicVehicleClass ::= 31 
+truck-axleCnt6Trailer BasicVehicleClass ::= 32 
+truck-axleCnt5MultiTrailer BasicVehicleClass ::= 33 
+truck-axleCnt6MultiTrailer BasicVehicleClass ::= 34 
+truck-axleCnt7MultiTrailer BasicVehicleClass ::= 35 
+motorcycle-TypeUnknown BasicVehicleClass ::= 40 
+motorcycle-TypeOther BasicVehicleClass ::= 41
+motorcycle-Cruiser-Standard BasicVehicleClass ::= 42
+motorcycle-SportUnclad BasicVehicleClass ::= 43
+motorcycle-SportTouring BasicVehicleClass ::= 44
+motorcycle-SuperSport BasicVehicleClass ::= 45
+motorcycle-Touring BasicVehicleClass ::= 46
+motorcycle-Trike BasicVehicleClass ::= 47
+motorcycle-wPassengers BasicVehicleClass ::= 48 
+transit-TypeUnknown BasicVehicleClass ::= 50 
+transit-TypeOther BasicVehicleClass ::= 51
+transit-BRT BasicVehicleClass ::= 52
+transit-ExpressBus BasicVehicleClass ::= 53
+transit-LocalBus BasicVehicleClass ::= 54
+transit-SchoolBus BasicVehicleClass ::= 55
+transit-FixedGuideway BasicVehicleClass ::= 56
+transit-Paratransit BasicVehicleClass ::= 57
+transit-Paratransit-Ambulance BasicVehicleClass ::= 58
+emergency-TypeUnknown BasicVehicleClass ::= 60 
+emergency-TypeOther BasicVehicleClass ::= 61 
+emergency-Fire-Light-Vehicle BasicVehicleClass ::= 62
+emergency-Fire-Heavy-Vehicle BasicVehicleClass ::= 63
+emergency-Fire-Paramedic-Vehicle BasicVehicleClass ::= 64
+emergency-Fire-Ambulance-Vehicle BasicVehicleClass ::= 65
+emergency-Police-Light-Vehicle BasicVehicleClass ::= 66
+emergency-Police-Heavy-Vehicle BasicVehicleClass ::= 67
+emergency-Other-Responder BasicVehicleClass ::= 68
+emergency-Other-Ambulance BasicVehicleClass ::= 69
+otherTraveler-TypeUnknown BasicVehicleClass ::= 80 
+otherTraveler-TypeOther BasicVehicleClass ::= 81
+otherTraveler-Pedestrian BasicVehicleClass ::= 82
+otherTraveler-Visually-Disabled BasicVehicleClass ::= 83
+otherTraveler-Physically-Disabled BasicVehicleClass ::= 84
+otherTraveler-Bicycle BasicVehicleClass ::= 85
+otherTraveler-Vulnerable-Roadworker BasicVehicleClass ::= 86
+infrastructure-TypeUnknown BasicVehicleClass ::= 90 
+infrastructure-Fixed BasicVehicleClass ::= 91
+infrastructure-Movable BasicVehicleClass ::= 92
+equipped-CargoTrailer BasicVehicleClass ::= 93
+
+FuelType ::= INTEGER (0..15)
+
+unknownFuel FuelType::= 0 
+gasoline FuelType::= 1
+ethanol FuelType::= 2 
+diesel FuelType::= 3 
+electric FuelType::= 4
+hybrid FuelType::= 5 
+hydrogen FuelType::= 6
+natGasLiquid FuelType::= 7 
+natGasComp FuelType::= 8 
+propane FuelType::= 9
+
+VehicleEmergencyExtensions ::= SEQUENCE {
+    responseType ResponseType OPTIONAL,
+    sirenUse SirenInUse OPTIONAL,
+    lightsUse LightbarInUse OPTIONAL,
+    ...
+}
+
+ResponseType ::= ENUMERATED {
+    notInUseOrNotEquipped (0),
+    emergency (1), 
+    nonEmergency (2), 
+    pursuit (3), 
+    stationary (4), 
+    slowMoving (5), 
+    stopAndGoMovement (6), 
+    ...
+}
+
+SirenInUse ::= ENUMERATED {
+    unavailable (0), 
+    notInUse (1),
+    inUse (2),
+    reserved (3) 
+}
+
+LightbarInUse ::= ENUMERATED {
+    unavailable (0), 
+    notInUse (1), 
+    inUse (2),
+    yellowCautionLights (3),
+    schooldBusLights (4),
+    arrowSignsActive (5),
+    slowMovingVehicle (6),
+    freqStops (7)
+}
+
+VehicleSafetyExtensions ::= SEQUENCE {
+		events VehicleEventFlags OPTIONAL,
+		pathHistory PathHistory OPTIONAL,
+		pathPrediction PathPrediction OPTIONAL,
+		lights ExteriorLights OPTIONAL,
+		...
+		}
+	
+PathHistory ::= SEQUENCE {
+    initialPosition FullPositionVector OPTIONAL,
+    currGNSSstatus GNSSstatus OPTIONAL,
+    crumbData PathHistoryPointList,
+    ...
+    }
+
+FullPositionVector ::= SEQUENCE {
+    utcTime DDateTime OPTIONAL, 
+    pos Position3D,
+    heading Heading OPTIONAL,
+    transmission TransmissionState OPTIONAL,
+    speed Speed OPTIONAL,
+    posAccuracy PositionConfidenceSet OPTIONAL,
+    timeConfidence TimeConfidence OPTIONAL,
+    motionCfd MotionConfidenceSet OPTIONAL,
+    ...
+}
+
+GNSSstatus ::= BIT STRING {
+    unavailable (0), 
+    isHealthy (1),
+    isMonitored (2),
+    baseStationType (3), 
+    aPDOPofUnder5 (4), 
+    inViewOfUnder5 (5), 
+    localCorrectionsPresent (6), 
+    networkCorrectionsPresent (7) 
+    } (SIZE(8))
+PathHistoryPointList ::= SEQUENCE (SIZE(1..23)) OF PathHistoryPoint
+
+PathHistoryPoint ::= SEQUENCE {
+    llvOffset PositionOffsetLLV,
+    timeOffset TimeOffset,
+    speed Speed OPTIONAL,
+    posAccuracy PositionConfidenceSet OPTIONAL,
+    heading CoarseHeading OPTIONAL,
+    ...
+    }
+PathPrediction ::= SEQUENCE {
+    radiusOfCurve RadiusOfCurvature,
+    confidence Confidence,
+    ...
+    }
+
+Confidence ::= INTEGER (0..200) 
+RadiusOfCurvature ::= INTEGER (-32767..32767) 
+
+VehicleSize ::= SEQUENCE {
+    width VehicleWidth,
+    length VehicleLength,
+    height VehicleHeight OPTIONAL
+}
+
+VehicleWidth ::= INTEGER (0..1023) 
+VehicleLength ::= INTEGER (0.. 4095)
+VehicleHeight ::= INTEGER (0..127)
+
+TransmissionState ::= ENUMERATED {
+		neutral (0), 
+		park (1), 
+		forwardGears (2), 
+		reverseGears (3), 
+		reserved1 (4),
+		reserved2 (5),
+		reserved3 (6),
+		unavailable (7)
+		
+	}
+
+VehicleEventFlags ::= BIT STRING {
+    eventHazardLights (0),
+    eventStopLineViolation (1), 
+    eventABSactivated (2),
+    eventTractionControlLoss (3),
+    eventStabilityControlactivated (4),
+    eventHazardousMaterials (5),
+    eventReserved1 (6),
+    eventHardBraking (7),
+    eventLightsChanged (8),
+    eventWipersChanged (9),
+    eventFlatTire (10),
+    eventDisabledVehicle (11), 
+    eventAirBagDeployment (12)
+    } (SIZE (13, ...))	
+
+ExteriorLights ::= BIT STRING { 
+    lowBeamHeadlightsOn (0),
+    highBeamHeadlightsOn (1),
+    leftTurnSignalOn (2),
+    rightTurnSignalOn (3),
+    hazardSignalOn (4),
+    automaticLightControlOn (5),
+    daytimeRunningLightsOn (6),
+    fogLightOn (7),
+    parkingLightsOn (8)
+    } (SIZE (9, ...))
+
+END

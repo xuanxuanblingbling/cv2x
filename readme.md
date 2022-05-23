@@ -51,7 +51,7 @@ def fuzz_loop():
     init_check_by_tcp()
     while 1:
         raw     = func_list[random.randint(0,4)]()
-        payload = BSM.MessageFrame.to_uper(raw)
+        payload = MsgFrame.MessageFrame.to_uper(raw)
         for j in range(5):
             print("[+] send_raw: "+str(raw))
             attack(payload)

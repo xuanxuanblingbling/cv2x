@@ -1,5 +1,5 @@
 from pwn import *
-from asn.v2x import BSM
+from asn.v2x import MsgFrame
 import os
 import random
 import threading
@@ -224,9 +224,9 @@ def gen_BSM():
         tmp['emergencyExt']  = {}
         if(optional()): tmp['emergencyExt']['responseType']   = random.choice(['notInUseOrNotEquipped','emergency','nonEmergency',
                                                                                'pursuit','stationary','slowMoving','stopAndGoMovement'])
-        if(optional()): tmp['emergencyExt']['sirenUse']       = random.choice(['unavailable','notlnUse','inUse','reserved'])
-        if(optional()): tmp['emergencyExt']['lightsUse']      = random.choice(['unavailable','notlnUse','inUse','yellowCautionLights',
-                                                                               'schooIdBusLights','arrowSignsActive','slowMovingVehicle','freqStops'])
+        if(optional()): tmp['emergencyExt']['sirenUse']       = random.choice(['unavailable','notInUse','inUse','reserved'])
+        if(optional()): tmp['emergencyExt']['lightsUse']      = random.choice(['unavailable','notInUse','inUse','yellowCautionLights',
+                                                                               'schooldBusLights','arrowSignsActive','slowMovingVehicle','freqStops'])
     
     raw = ('bsmFrame',tmp)
     return raw
@@ -633,8 +633,8 @@ def gen_MAP():
                     # max 9
                     for ii in range(random.randint(1,9)):
                         tmp_RegulatorySpeedLimit = {}
-                        tmp_RegulatorySpeedLimit['type']  = random.choice(['unknown', 'maxSpeedlnSchoolZone', 'maxSpeedlnSchoolZoneWhenChildrenArePresent',
-                                                                           'maxSpeedlnConstructionZone','vehicleMinSpeed','vehicleMaxSpeed','vehicleNightMaxSpeed',
+                        tmp_RegulatorySpeedLimit['type']  = random.choice(['unknown', 'maxSpeedInSchoolZone', 'maxSpeedInSchoolZoneWhenChildrenArePresent',
+                                                                           'maxSpeedInConstructionZone','vehicleMinSpeed','vehicleMaxSpeed','vehicleNightMaxSpeed',
                                                                            'truckMinSpeed','truckMaxSpeed','truckNightMaxSpeed','vehiclesWithTrailersMinSpeed',
                                                                            'vehiclesWithTrailersMaxSpeed','vehiclesWithTrailersNightMaxSpeed'])
                         tmp_RegulatorySpeedLimit['speed'] = random.randint(0,8191)
@@ -669,8 +669,8 @@ def gen_MAP():
                     # max 31
                     for kk in range(random.randint(1,4)):
                         tmp_Movement = {}
-                        tmp_Movement['remoteintersection'] = {'id':random.randint(0,65535)}
-                        if(optional()): tmp_Movement['remoteintersection']['region'] = random.randint(0,65535)
+                        tmp_Movement['remoteIntersection'] = {'id':random.randint(0,65535)}
+                        if(optional()): tmp_Movement['remoteIntersection']['region'] = random.randint(0,65535)
                         if(optional()): tmp_Movement['phaseId'] = random.randint(0,255)
                         
                         tmp_Link['movements'] += [tmp_Movement]
@@ -704,8 +704,8 @@ def gen_MAP():
                         # max 8
                         for t1 in range(random.randint(1,8)):
                             tmp_Connection = {}
-                            tmp_Connection['remoteintersection'] = {'id':random.randint(0,65535)}
-                            if(optional()): tmp_Connection['remoteintersection']['region'] = random.randint(0,65535)
+                            tmp_Connection['remoteIntersection'] = {'id':random.randint(0,65535)}
+                            if(optional()): tmp_Connection['remoteIntersection']['region'] = random.randint(0,65535)
                             if(optional()): 
                                 tmp_Connection['connectingLane'] = {}
                                 tmp_Connection['connectingLane']['lane'] = random.randint(0,255)
@@ -720,8 +720,8 @@ def gen_MAP():
                         # max 9
                         for t2 in range(random.randint(1,9)):
                             tmp_RegulatorySpeedLimit = {}
-                            tmp_RegulatorySpeedLimit['type']  = random.choice(['unknown', 'maxSpeedlnSchoolZone', 'maxSpeedlnSchoolZoneWhenChildrenArePresent',
-                                                                            'maxSpeedlnConstructionZone','vehicleMinSpeed','vehicleMaxSpeed','vehicleNightMaxSpeed',
+                            tmp_RegulatorySpeedLimit['type']  = random.choice(['unknown', 'maxSpeedInSchoolZone', 'maxSpeedInSchoolZoneWhenChildrenArePresent',
+                                                                            'maxSpeedInConstructionZone','vehicleMinSpeed','vehicleMaxSpeed','vehicleNightMaxSpeed',
                                                                             'truckMinSpeed','truckMaxSpeed','truckNightMaxSpeed','vehiclesWithTrailersMinSpeed',
                                                                             'vehiclesWithTrailersMaxSpeed','vehiclesWithTrailersNightMaxSpeed'])
                             tmp_RegulatorySpeedLimit['speed'] = random.randint(0,8191)
@@ -862,7 +862,7 @@ def fuzz_loop():
     init_check_by_tcp()
     while 1:
         raw     = func_list[random.randint(0,4)]()
-        payload = BSM.MessageFrame.to_uper(raw)
+        payload = MsgFrame.MessageFrame.to_uper(raw)
         for j in range(5):
             print("[+] send_raw: "+str(raw))
             attack(payload)

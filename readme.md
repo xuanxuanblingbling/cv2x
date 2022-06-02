@@ -1,5 +1,11 @@
 # 毕业设计 C-V2X漏洞挖掘 开放资源
 
+
+## PPT
+
+- [GoGoHack 2022 车联网信息安全讨论会](https://gogohack.org/)：《C-V2X 安全研究》
+
+
 ## 标准文件
 
 | 标准等级 | 标准号            | 标准名称                                                     |
@@ -61,8 +67,3 @@ def fuzz_loop():
             save_payload(payload,raw)
             reboot()
 ```
-
-## PPT
-
-- [GoGoHack 2022 车联网信息安全讨论会](https://gogohack.org/)：《C-V2X 安全研究》
-

@@ -3,7 +3,9 @@
 
 ## PPT
 
-- [GoGoHack 2022 车联网信息安全讨论会](https://gogohack.org/)：《C-V2X 安全研究》
+- [GoGoHack 2022 车联网信息安全讨论会](https://gogohack.org/)：[《C-V2X 安全研究》](https://github.com/xuanxuanblingbling/cv2x/blob/master/ppt/gogohack.pdf)
+
+![image](https://github.com/xuanxuanblingbling/cv2x/blob/master/ppt/qrcode.png?raw=true)
 
 
 ## 标准文件
